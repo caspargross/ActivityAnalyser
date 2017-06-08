@@ -1,4 +1,4 @@
-package com.vaadin;
+package com.vaadin.model;
 
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.TokenResponse;
@@ -35,12 +35,6 @@ import java.util.concurrent.TimeUnit;
 public class MyAuthentification {
 
 
-        private static final java.io.File DATA_STORE_DIR =
-            new java.io.File(System.getProperty("user.home"), ".store/dailymotion_sample");
-
-
-
-
     /* Redirect URI */
     private static final String REDIRECT_URI = "http://localhost:8080";
 
@@ -50,10 +44,10 @@ public class MyAuthentification {
     /* OAuth 2 scope. */
     private static final String SCOPE = "https://www.googleapis.com/auth/fitness.activity.read";
 
-    /* Global instance of the HTTP transport. */
+    /* Create instance of the HTTP transport. */
     private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
 
-    /* Global instance of the JSON factory. */
+    /* Create instance of the JSON factory. */
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
     /* File Credential Storage */
@@ -62,8 +56,10 @@ public class MyAuthentification {
     /* Authorization Flow */
     private GoogleAuthorizationCodeFlow flow;
 
+    /* My Credential for this Session */
     private Credential myCredential;
 
+    private String USER_NAME;
 
 
     /* Google client secret (for this application) */
@@ -74,13 +70,14 @@ public class MyAuthentification {
                         new FileInputStream(USER_SECRETS_FILE), "UTF-8")
 
         );
-
     }
 
     /* Standard Construtor, creates Authentification Flow */
-    public MyAuthentification() {
-       this.flow = initFlow();
+    public MyAuthentification(String userName) {
+        this.USER_NAME = userName;
+        this.flow = initFlow();
     }
+
     /* Authorizes the installed application to access user's protected data. */
     private static Credential authorize() throws Exception {
         // set up authorization code flow

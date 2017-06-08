@@ -1,6 +1,10 @@
-package com.vaadin;
+package com.vaadin.model;
 
+import com.vaadin.model.MyAuthentification;
 import com.vaadin.server.*;
+import com.vaadin.ui.MainView;
+import com.vaadin.ui.StartUI;
+import com.vaadin.ui.UI;
 
 import java.io.IOException;
 
@@ -17,15 +21,24 @@ public class ReturnCodeHandler implements RequestHandler{
         System.out.println(vaadinRequest);
 
         String request = ((VaadinServletRequest) vaadinRequest).getQueryString();
+
         if (request.startsWith("code")) {
+
             String code = request.split("=")[1];
             myAuthentification.setCode(code);
+            UI.getCurrent().setContent(new MainView());
+            Page.getCurrent().setLocation("");
+
+
+
         } else if (request.contains("Error")) {
             System.out.println("Google Authentification returned error");
         } else {
             System.out.println("Request not identified: ");
             System.out.println("request");
         }
+
+
 
         System.out.printf("Response: ");
         System.out.println(vaadinResponse);
