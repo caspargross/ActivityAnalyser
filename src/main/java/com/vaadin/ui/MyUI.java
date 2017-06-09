@@ -2,11 +2,11 @@ package com.vaadin.ui;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.model.MyAuthentification;
 import com.vaadin.model.ReturnCodeHandler;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
-import com.vaadin.server.Page;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
 import com.vaadin.server.VaadinSession;
@@ -19,46 +19,56 @@ import com.vaadin.server.VaadinSession;
  * overridden to add component to the user interface and initialize non-component functionality.
  */
 @Theme("mytheme")
-public class StartUI extends UI {
+@PreserveOnRefresh
+public class MyUI extends UI {
 
 
-    /* Vaadin Session parameters */
+    /* Vaadin Session parameters
+     * This one is accessbile from all Classes */
     String userName;
+    LoginView loginView;
+    MainView mainView;
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
-
-        LoginView loginView = new LoginView();
+        // Set this UI
+        UI.setCurrent(this);
+        loginView = new LoginView();
         setContent(loginView);
         loginView.loginSubmit.addClickListener(e -> {
-            if (!loginView.loginUserID.equals("")){
-                loginUser(loginView.loginUserID.getValue());
+             if (!loginView.loginUserID.equals("")){
+               loginUser(loginView.loginUserID.getValue());
                userName = loginView.loginUserID.getValue();
+               //startMainView();
 
             }
         });
 
     }
 
-    private void loginUser(String userName){
+    private void loginUser(String userName) {
 
         // Else: Start Authentification Process
         MyAuthentification auth = new MyAuthentification(userName);
-        Page.getCurrent().open(auth.getAuthURI(), "_self");
+        getPage().setLocation(auth.getAuthURI());
 
+
+        //setContent(new GoogleAuthFrame(auth.getAuthURI()));
         ReturnCodeHandler returnCodeHandler = new ReturnCodeHandler();
         returnCodeHandler.setMyAuthentification(auth);
         VaadinSession.getCurrent().addRequestHandler(returnCodeHandler);
 
+
     }
 
     private void startMainView() {
-
+        mainView = new MainView();
+        setContent(mainView);
     }
 
 
-    @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
-    @VaadinServletConfiguration(ui = StartUI.class, productionMode = false)
+    @WebServlet(urlPatterns = "/*", name = "TrackFitServlet", asyncSupported = true)
+    @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
     public static class MyUIServlet extends VaadinServlet {
     }
 }

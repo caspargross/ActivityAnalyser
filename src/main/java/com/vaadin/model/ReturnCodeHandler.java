@@ -1,10 +1,7 @@
 package com.vaadin.model;
 
-import com.vaadin.model.MyAuthentification;
 import com.vaadin.server.*;
-import com.vaadin.ui.MainView;
-import com.vaadin.ui.StartUI;
-import com.vaadin.ui.UI;
+import com.vaadin.ui.*;
 
 import java.io.IOException;
 
@@ -14,35 +11,30 @@ import java.io.IOException;
 public class ReturnCodeHandler implements RequestHandler{
 
     MyAuthentification myAuthentification = null;
+    final String redirectURL = "http://localhost:8080";
 
     @Override
-    public boolean handleRequest(VaadinSession vaadinSession, VaadinRequest vaadinRequest, VaadinResponse vaadinResponse) throws IOException {
-        System.out.print("Request: ");
-        System.out.println(vaadinRequest);
-
-        String request = ((VaadinServletRequest) vaadinRequest).getQueryString();
-
-        if (request.startsWith("code")) {
-
-            String code = request.split("=")[1];
+    public boolean handleRequest(VaadinSession session, VaadinRequest request, VaadinResponse response) throws IOException {
+        if (request.getParameter("code") != null) {
+            String code = request.getParameter("code");
             myAuthentification.setCode(code);
-            UI.getCurrent().setContent(new MainView());
-            Page.getCurrent().setLocation("");
+            VaadinSession.getCurrent().removeRequestHandler(this);
 
+            ((VaadinServletResponse) response).getHttpServletResponse().
+                    sendRedirect(redirectURL);
 
-
-        } else if (request.contains("Error")) {
-            System.out.println("Google Authentification returned error");
-        } else {
-            System.out.println("Request not identified: ");
-            System.out.println("request");
+            // Set UI Content to Main View
+            MainView mainView = new MainView();
+            VaadinSession.getCurrent().getUIById(0).setContent(mainView);
+            return true;
         }
+        return false;
 
+    }
 
-
-        System.out.printf("Response: ");
-        System.out.println(vaadinResponse);
-        return true;
+    public void authDenied(String reason) {
+        Notification.show("authDenied:" + reason,
+                Notification.Type.ERROR_MESSAGE);
     }
 
     public void setMyAuthentification(MyAuthentification myAuthentification) {

@@ -6,7 +6,7 @@ import com.vaadin.navigator.ViewChangeListener;
 /**
  * Created by caspar on 07.06.17.
  */
-public class LoginView extends LoginUI implements View {
+public class LoginView extends LoginDesign implements View {
 
 
     @Override
