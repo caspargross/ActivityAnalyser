@@ -1,7 +1,6 @@
 package com.vaadin.model;
 
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
@@ -11,21 +10,15 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.fitness.Fitness;
-import com.google.api.services.fitness.FitnessRequest;
-import com.google.api.services.fitness.FitnessRequestInitializer;
 import com.google.api.services.fitness.model.*;
-import com.vaadin.server.ExternalResource;
-import com.vaadin.server.Resource;
+import com.google.api.services.oauth2.Oauth2;
+import com.google.api.services.oauth2.model.Userinfoplus;
 
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 
 /**
  * Created by caspar on 05.06.17.
@@ -42,7 +35,9 @@ public class MyAuthentification {
     private static final String USER_SECRETS_FILE = "src/main/resources/client_secret.json";
 
     /* OAuth 2 scope. */
-    private static final String SCOPE = "https://www.googleapis.com/auth/fitness.activity.read";
+    private static final List<String> SCOPES = Arrays.asList("https://www.googleapis.com/auth/fitness.activity.read",
+            "https://www.googleapis.com/auth/userinfo.profile",
+            "https://www.googleapis.com/auth/userinfo.email");
 
     /* Create instance of the HTTP transport. */
     private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
@@ -85,12 +80,11 @@ public class MyAuthentification {
                 HTTP_TRANSPORT,
                 JSON_FACTORY,
                 loadClientSecrets(JSON_FACTORY),
-                Arrays.asList(SCOPE)
+                SCOPES
         ).build();
 
         // Check if already loaded:
         System.out.println(flow.newAuthorizationUrl().setRedirectUri(REDIRECT_URI).build());
-
 
         //flow.createAndStoreCredential()
 
@@ -105,7 +99,7 @@ public class MyAuthentification {
                     HTTP_TRANSPORT,
                     JSON_FACTORY,
                     loadClientSecrets(JSON_FACTORY),
-                    Arrays.asList(SCOPE)
+                    SCOPES
             ).build();
         } catch (IOException e) {
             System.out.println("Cannot read JSON with Client Secrets");
@@ -125,9 +119,8 @@ public class MyAuthentification {
 
     public Credential fetchCredential(String code) throws IOException {
         GoogleTokenResponse tokenResponse = flow.newTokenRequest(code).setRedirectUri(REDIRECT_URI).execute();
-        System.out.println("TOken Response");
+        System.out.println("Token Response");
         System.out.println(tokenResponse.getIdToken());
-        // TODO Store Token Response somewhere
         return flow.createAndStoreCredential(tokenResponse, "caspar.gross");
     }
 
@@ -142,17 +135,27 @@ public class MyAuthentification {
         System.out.println(code);
         try {
             myCredential = fetchCredential(code);
-            requestData();
+            // STORE CREDENTIAL IN MONGODB
+            getUserData();
+            getFitData();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void requestData() throws IOException {
+    public void getUserData() throws IOException {
+        Oauth2 oauth2 = new Oauth2.Builder(HTTP_TRANSPORT, JSON_FACTORY, myCredential)
+                .setApplicationName("TrackFit").build();
+        Userinfoplus userInfpo = oauth2.userinfo().get().execute();
+        System.out.println(userInfpo.toPrettyString());
+        DbConnector dbConnect = new DbConnector();
+        dbConnect.createUser("caspar.gross", userInfpo.toString());
+    }
+
+    public void getFitData() throws IOException {
 
         Fitness fit = new Fitness.Builder(HTTP_TRANSPORT, JSON_FACTORY, myCredential)
                 .setApplicationName("TrackFit").build();
-
 
         // Setting a start and end date using a range of 1 year before this moment.
         Calendar cal = Calendar.getInstance();

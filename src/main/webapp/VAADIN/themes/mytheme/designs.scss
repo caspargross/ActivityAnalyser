@@ -21,6 +21,15 @@
          }
        }
 
+       .user-image {
+         background-repeat: no-repeat;
+         background-position: 50%;
+         border-radius: 50%;
+         width: 100%;
+         height: 100%;
+       }
+
+
        .navigation-bar {
          background: $navigation-bar-bg-color;
          z-index: 10000;

@@ -52,12 +52,10 @@ public class MyUI extends UI {
         MyAuthentification auth = new MyAuthentification(userName);
         getPage().setLocation(auth.getAuthURI());
 
-
         //setContent(new GoogleAuthFrame(auth.getAuthURI()));
         ReturnCodeHandler returnCodeHandler = new ReturnCodeHandler();
         returnCodeHandler.setMyAuthentification(auth);
         VaadinSession.getCurrent().addRequestHandler(returnCodeHandler);
-
 
     }
 

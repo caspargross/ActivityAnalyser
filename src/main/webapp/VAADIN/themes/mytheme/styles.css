@@ -1546,6 +1546,14 @@ div.v-layout.v-horizontal.v-widget {
 	left: 0;
 }
 
+.mytheme .app-shell .user-image {
+	background-repeat: no-repeat;
+	background-position: 50%;
+	border-radius: 50%;
+	width: 100%;
+	height: 100%;
+}
+
 .mytheme .app-shell .navigation-bar {
 	background: #197de1;
 	z-index: 10000;
