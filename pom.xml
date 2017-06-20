@@ -76,11 +76,6 @@
 			<artifactId>google-api-services-oauth2</artifactId>
 			<version>v2-rev65-1.17.0-rc</version>
 		</dependency>
-		<dependency>
-			<groupId>com.vaadin</groupId>
-			<artifactId>vaadin-testbench</artifactId>
-			<version>4.2.0</version>
-		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
 		<dependency>
 			<groupId>org.xerial</groupId>

@@ -1,6 +1,7 @@
 package com.vaadin.model;
 
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.mongodb.*;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -26,21 +27,21 @@ public class DbConnector extends MongoClient {
         return true;
     }
 
-    public void createUser(String userName, String googleUserData) {
+    public void createUser(String googleUserData, GoogleCredential credential) {
 
         MongoCollection<Document> userColl = db.getCollection("users");
         Document userDoc = Document.parse(googleUserData);
-        userDoc.put("userName", userName);
-        userDoc.put("googleUserInfo", userName);
+        userDoc.append("refreshToken", credential.getRefreshToken());
+        userDoc.append("serviceAccountUser", credential.getServiceAccountUser());
         userColl.insertOne(userDoc);
     }
 
-    public String getUserImgURI(String userName) {
+    public String getUserImgURI(String userID) {
         return "TODO";
 
     }
 
-    public String getUserRealName(String userName) {
+    public String getUserRealName(String userID) {
         return "TODO";
 
     }
