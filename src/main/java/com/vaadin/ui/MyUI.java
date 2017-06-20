@@ -2,6 +2,7 @@ package com.vaadin.ui;
 
 import javax.servlet.annotation.WebServlet;
 
+import com.mongodb.MongoClient;
 import com.vaadin.annotations.PreserveOnRefresh;
 import com.vaadin.model.MyAuthentification;
 import com.vaadin.model.ReturnCodeHandler;
@@ -24,9 +25,6 @@ import com.vaadin.server.VaadinSession;
 public class MyUI extends UI {
 
 
-    /* Vaadin Session parameters
-     * This one is accessbile from all Classes */
-    String userID;
     LoginView loginView;
     MainView mainView;
 
@@ -40,13 +38,11 @@ public class MyUI extends UI {
                loginUser();
                     //startMainView();
 
-
         });
 
     }
 
     private void loginUser() {
-
         // Else: Start Authentification Process
         MyAuthentification auth = new MyAuthentification();
         getPage().setLocation(auth.getAuthURI());
@@ -55,18 +51,14 @@ public class MyUI extends UI {
         ReturnCodeHandler returnCodeHandler = new ReturnCodeHandler();
         returnCodeHandler.setMyAuthentification(auth);
         VaadinSession.getCurrent().addRequestHandler(returnCodeHandler);
-
-    }
-
-
-    private void startMainView() {
-        mainView = new MainView();
-        setContent(mainView);
     }
 
 
     @WebServlet(urlPatterns = "/*", name = "MyUIServlet", asyncSupported = true)
     @VaadinServletConfiguration(ui = MyUI.class, productionMode = false)
     public static class MyUIServlet extends VaadinServlet {
+        /* Vaadin Session parameters
+        * This one is accessbile from all Classes */
+        String userID;
     }
 }

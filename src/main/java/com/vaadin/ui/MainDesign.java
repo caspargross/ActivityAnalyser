@@ -17,7 +17,7 @@ import com.vaadin.ui.declarative.Design;
 @SuppressWarnings("serial")
 public class MainDesign extends HorizontalLayout {
     protected Image image;
-    protected Label label;
+    protected Label nameLabel;
     protected Button menuButton;
     protected CssLayout menu;
     protected Button dashboard;
