@@ -30,7 +30,7 @@ public class DbConnector extends MongoClient {
 
     public DbConnector() {
 
-        // Accesses DB, creates an Instance if it does not exist yet.
+        // Accesses DB, creates an Instance if it does not exist yet.c
         this.db = getDatabase("trackFitDB");
         userColl = db.getCollection("users");
     }
@@ -53,7 +53,6 @@ public class DbConnector extends MongoClient {
     public static String getUserPicture(String userID) {
         return userColl.find(eq("id", userID))
                 .projection(fields(include("name", "picture"))).first().getString("picture");
-
 
 
     }
