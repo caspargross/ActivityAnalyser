@@ -1,6 +1,7 @@
 package com.vaadin.model;
 
 
+import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
@@ -14,7 +15,6 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.oauth2.Oauth2;
 import com.google.api.services.oauth2.model.Userinfoplus;
 import com.vaadin.server.VaadinSession;
-import jdk.nashorn.internal.parser.Token;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -26,40 +26,15 @@ import java.util.*;
  *
  * Requested Scope: https://www.googleapis.com/auth/fitness.activity.read
  */
-public class MyAuthentification {
-
-    /* Redirect URI */
-    private static final String REDIRECT_URI = "http://localhost:8080";
-
-    /* File path to secrets File */
-    private static final String USER_SECRETS_FILE = "src/main/resources/client_secret.json";
-
-    /* OAuth 2 scope. */
-    private static final List<String> SCOPES = Arrays.asList("https://www.googleapis.com/auth/fitness.activity.read",
-            "https://www.googleapis.com/auth/userinfo.profile",
-            "https://www.googleapis.com/auth/userinfo.email");
-
-    /* Create instance of the HTTP transport. */
-    private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
-
-    /* Create instance of the JSON factory. */
-    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-
-    /* File Credential Storage */
-    private static FileDataStoreFactory DATA_STORE_FACTORY;
+public class AuthRequest extends ApiRequest{
 
     /* Authorization Flow */
     private GoogleAuthorizationCodeFlow flow;
 
-    /* My Credential for this Session */
-    private GoogleCredential myCredential;
-
-
     /* Standard Construtor, creates Authentification Flow */
-    public MyAuthentification() {
+    public AuthRequest() {
         this.flow = initFlow();
     }
-
 
     public GoogleAuthorizationCodeFlow initFlow() {
         // set up authorization code flow
@@ -79,53 +54,33 @@ public class MyAuthentification {
         return flow;
     }
 
-    /* Load Google client secret (for this application) */
-    private static GoogleClientSecrets loadClientSecrets(JsonFactory jsonFactory) throws IOException {
-        return  GoogleClientSecrets.load(
-                jsonFactory,
-                new InputStreamReader(
-                        new FileInputStream(USER_SECRETS_FILE), "UTF-8")
-
-        );
-    }
-
-    public boolean authNeeded(String userName) {
-        // TODO Check if access token is already in the database
-        return true;
-    }
 
     public String getAuthURI() {
         return flow.newAuthorizationUrl().setRedirectUri(REDIRECT_URI).build();
     }
 
-    public GoogleTokenResponse fetchToken(String code) throws IOException {
+    public Credential createCredential(String code) throws IOException {
         GoogleTokenResponse tokenResponse = flow.newTokenRequest(code).setRedirectUri(REDIRECT_URI).execute();
         System.out.println("Token Response");
         System.out.println(tokenResponse.getIdToken());
-        return tokenResponse;
-                //flow.createAndStoreCredential(tokenResponse, "caspar.gross");
+        return flow.createAndStoreCredential(tokenResponse, "id1");
     }
 
 
-    /* Getters and Setters */
-    public static String getUserSecretsFile() {
-        return USER_SECRETS_FILE;
-    }
-
-    public void obtainAuthCode(String code){
+    public void handleReturnCode(String code){
         System.out.println("Code obtained: ");
         System.out.println(code);
         try {
-            TokenResponse myTokenResponse = fetchToken(code);
-            myCredential = new GoogleCredential().setAccessToken(myTokenResponse.getAccessToken());
-            myCredential.setRefreshToken(myTokenResponse.getRefreshToken());
+            VaadinSession.getCurrent().setAttribute("sessionCredential", createCredential(code));
+            myCredential = (Credential)VaadinSession.getCurrent().getAttribute("sessionCredential");
+            
             // STORE CREDENTIAL IN MONGODB
             updateUserData();
-            //getFitData();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
 
     public void updateUserData() throws IOException {
         Oauth2 oauth2 = new Oauth2.Builder(HTTP_TRANSPORT, JSON_FACTORY, myCredential)

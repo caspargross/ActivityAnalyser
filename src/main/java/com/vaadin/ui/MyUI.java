@@ -2,9 +2,9 @@ package com.vaadin.ui;
 
 import javax.servlet.annotation.WebServlet;
 
-import com.mongodb.MongoClient;
+import com.google.api.client.auth.oauth2.Credential;
 import com.vaadin.annotations.PreserveOnRefresh;
-import com.vaadin.model.MyAuthentification;
+import com.vaadin.model.AuthRequest;
 import com.vaadin.model.ReturnCodeHandler;
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.VaadinServletConfiguration;
@@ -27,6 +27,7 @@ public class MyUI extends UI {
 
     LoginView loginView;
     MainView mainView;
+    Credential sessionCredential;
 
     @Override
     protected void init(VaadinRequest vaadinRequest) {
@@ -44,12 +45,12 @@ public class MyUI extends UI {
 
     private void loginUser() {
         // Else: Start Authentification Process
-        MyAuthentification auth = new MyAuthentification();
+        AuthRequest auth = new AuthRequest();
         getPage().setLocation(auth.getAuthURI());
 
         //setContent(new GoogleAuthFrame(auth.getAuthURI()));
         ReturnCodeHandler returnCodeHandler = new ReturnCodeHandler();
-        returnCodeHandler.setMyAuthentification(auth);
+        returnCodeHandler.setAuthRequest(auth);
         VaadinSession.getCurrent().addRequestHandler(returnCodeHandler);
     }
 

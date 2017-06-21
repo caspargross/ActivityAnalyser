@@ -1,6 +1,9 @@
 package com.vaadin.model;
 
+import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.http.BasicAuthentication;
+import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
@@ -10,6 +13,8 @@ import com.google.api.services.fitness.model.AggregateBy;
 import com.google.api.services.fitness.model.AggregateRequest;
 import com.google.api.services.fitness.model.AggregateResponse;
 import com.google.api.services.fitness.model.BucketByTime;
+import com.mongodb.util.JSON;
+import com.vaadin.server.VaadinSession;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,18 +24,16 @@ import java.util.Date;
 /**
  * Created by caspar on 20.06.17.
  */
-public class fetchFitData {
+public class DataRequest extends AuthRequest{
 
-    /* Create instance of the HTTP transport. */
-    private static final HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
+    /* Google User ID for the current user*/
+    public DataRequest() {
+        myCredential = (Credential) VaadinSession.getCurrent().getAttribute("sessionCredential");
 
-    /* Create instance of the JSON factory. */
-    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+    }
 
-    /* My Credential for this Session */
-    private Credential myCredential;
 
-    public void getFitData() throws IOException {
+    public String getFitData() throws IOException {
 
         Fitness fit = new Fitness.Builder(HTTP_TRANSPORT, JSON_FACTORY, myCredential)
                 .setApplicationName("TrackFit").build();
@@ -64,5 +67,7 @@ public class fetchFitData {
                 .aggregate("me", aggRequest).execute();
 
         System.out.println(aggResponse.toPrettyString());
+
+        return aggResponse.toString();
     }
 }

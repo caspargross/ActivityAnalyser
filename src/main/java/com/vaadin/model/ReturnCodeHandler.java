@@ -10,14 +10,14 @@ import java.io.IOException;
  */
 public class ReturnCodeHandler implements RequestHandler{
 
-    MyAuthentification myAuthentification = null;
+    AuthRequest authRequest = null;
     final String redirectURL = "http://localhost:8080";
 
     @Override
     public boolean handleRequest(VaadinSession session, VaadinRequest request, VaadinResponse response) throws IOException {
         if (request.getParameter("code") != null) {
             String code = request.getParameter("code");
-            myAuthentification.obtainAuthCode(code);
+            authRequest.handleReturnCode(code);
             VaadinSession.getCurrent().removeRequestHandler(this);
 
             ((VaadinServletResponse) response).getHttpServletResponse().
@@ -36,7 +36,7 @@ public class ReturnCodeHandler implements RequestHandler{
                 Notification.Type.ERROR_MESSAGE);
     }
 
-    public void setMyAuthentification(MyAuthentification myAuthentification) {
-        this.myAuthentification = myAuthentification;
+    public void setAuthRequest(AuthRequest authRequest) {
+        this.authRequest = authRequest;
     }
 }

@@ -19,6 +19,7 @@ public class DbConnector extends MongoClient {
 
     MongoDatabase db;
     static MongoCollection<Document> userColl;
+    MongoCollection<Document> stepColl;
 
     Block<Document> printBlock = new Block<Document>() {
         @Override
@@ -32,6 +33,7 @@ public class DbConnector extends MongoClient {
         // Accesses DB, creates an Instance if it does not exist yet.c
         this.db = getDatabase("trackFitDB");
         userColl = db.getCollection("users");
+        stepColl = db.getCollection("steps");
     }
 
     public boolean findUser (String userName) {
@@ -40,16 +42,18 @@ public class DbConnector extends MongoClient {
         return true;
     }
 
-    public void storeUser(String googleUserData, GoogleCredential credential) {
+    public void storeUser(String googleUserData, Credential credential) {
 
         Document userDoc = Document.parse(googleUserData);
         userDoc.append("refreshToken", credential.getRefreshToken());
         userColl.insertOne(userDoc);
     }
 
-    public void storeSteps(JSON stepData) {
+    public void storeSteps(String stepData) {
+        Document stepDoc = Document.parse(stepData);
+        stepColl.insertOne(stepDoc);
 
-    };
+    }
 
     public static String extractUserPicture(String userID) {
         return userColl.find(eq("id", userID))
