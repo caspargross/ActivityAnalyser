@@ -14,10 +14,9 @@ public class MainView extends MainDesign implements View {
     String userID;
 
     public MainView() {
-        this.userID = (String) VaadinSession.getCurrent().getAttribute("userID");a
+        this.userID = (String) VaadinSession.getCurrent().getAttribute("userID");   
 
         updateUserProfile();
-        fetchFitData();
     }
 
     public void updateUserProfile() {
