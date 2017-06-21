@@ -16,10 +16,13 @@ public class MainView extends MainDesign implements View {
 
     public MainView() {
         this.userID = (String) VaadinSession.getCurrent().getAttribute("userID");
+
+    }
+
+    public void updateUserProfile() {
         userLabel.setValue("User ID: " + userID);
         image.setSource(new ExternalResource(DbConnector.getUserPicture(userID)));
         nameLabel.setValue(DbConnector.getUserRealName(userID));
-
     }
 
     @Override

@@ -26,6 +26,7 @@ public class ReturnCodeHandler implements RequestHandler{
             // Set UI Content to Main View
             MainView mainView = new MainView();
             VaadinSession.getCurrent().getUIById(0).setContent(mainView);
+            mainView.updateUserProfile();
             return true;
         }
         return false;
