@@ -17,7 +17,7 @@ public class ReturnCodeHandler implements RequestHandler{
     public boolean handleRequest(VaadinSession session, VaadinRequest request, VaadinResponse response) throws IOException {
         if (request.getParameter("code") != null) {
             String code = request.getParameter("code");
-            myAuthentification.setCode(code);
+            myAuthentification.obtainAuthCode(code);
             VaadinSession.getCurrent().removeRequestHandler(this);
 
             ((VaadinServletResponse) response).getHttpServletResponse().
