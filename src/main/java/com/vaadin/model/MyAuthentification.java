@@ -1,6 +1,7 @@
 package com.vaadin.model;
 
 
+import com.google.api.client.auth.oauth2.TokenResponse;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -13,6 +14,7 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.oauth2.Oauth2;
 import com.google.api.services.oauth2.model.Userinfoplus;
 import com.vaadin.server.VaadinSession;
+import jdk.nashorn.internal.parser.Token;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -114,7 +116,9 @@ public class MyAuthentification {
         System.out.println("Code obtained: ");
         System.out.println(code);
         try {
-            myCredential = new GoogleCredential().setAccessToken(fetchToken(code).getAccessToken());
+            TokenResponse myTokenResponse = fetchToken(code);
+            myCredential = new GoogleCredential().setAccessToken(myTokenResponse.getAccessToken());
+            myCredential.setRefreshToken(myTokenResponse.getRefreshToken());
             // STORE CREDENTIAL IN MONGODB
             updateUserData();
             //getFitData();
@@ -129,7 +133,7 @@ public class MyAuthentification {
         Userinfoplus userInfo = oauth2.userinfo().get().execute();
         System.out.println(userInfo.toPrettyString());
         DbConnector dbConnect = new DbConnector();
-        dbConnect.createUser(userInfo.toString(), myCredential);
+        dbConnect.storeUser(userInfo.toString(), myCredential);
         // Set Vaadin Session attribute to current user
         VaadinSession.getCurrent().setAttribute("userID", userInfo.getId());
 

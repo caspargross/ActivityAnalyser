@@ -1,6 +1,5 @@
 package com.vaadin.ui;
 
-import com.mongodb.MongoClient;
 import com.vaadin.model.DbConnector;
 import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener;
@@ -15,14 +14,16 @@ public class MainView extends MainDesign implements View {
     String userID;
 
     public MainView() {
-        this.userID = (String) VaadinSession.getCurrent().getAttribute("userID");
+        this.userID = (String) VaadinSession.getCurrent().getAttribute("userID");a
 
+        updateUserProfile();
+        fetchFitData();
     }
 
     public void updateUserProfile() {
         userLabel.setValue("User ID: " + userID);
-        image.setSource(new ExternalResource(DbConnector.getUserPicture(userID)));
-        nameLabel.setValue(DbConnector.getUserRealName(userID));
+        image.setSource(new ExternalResource(DbConnector.extractUserPicture(userID)));
+        nameLabel.setValue(DbConnector.extractUserRealName(userID));
     }
 
     @Override
