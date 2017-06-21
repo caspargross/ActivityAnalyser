@@ -4,7 +4,6 @@ import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.mongodb.*;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.util.JSON;
 import org.bson.Document;
@@ -41,26 +40,25 @@ public class DbConnector extends MongoClient {
         return true;
     }
 
-    public void createUser(String googleUserData, GoogleCredential credential) {
-
+    public void storeUser(String googleUserData, GoogleCredential credential) {
 
         Document userDoc = Document.parse(googleUserData);
         userDoc.append("refreshToken", credential.getRefreshToken());
-        userDoc.append("serviceAccountUser", credential.getServiceAccountUser());
         userColl.insertOne(userDoc);
     }
 
-    public static String getUserPicture(String userID) {
+    public void storeSteps(JSON stepData) {
+
+    };
+
+    public static String extractUserPicture(String userID) {
         return userColl.find(eq("id", userID))
                 .projection(fields(include("name", "picture"))).first().getString("picture");
-
-
     }
 
-    public static String getUserRealName(String userID) {
+    public static String extractUserRealName(String userID) {
         return userColl.find(eq("id", userID))
                 .projection(fields(include("name", "picture"))).first().getString("name");
-
     }
 
 
