@@ -40,8 +40,8 @@ public class DataRequest extends AuthRequest{
 
         // Setting a start and end date using a range of 1 year before this moment.
         Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        cal.setTime(now);
+        long now = cal.getTimeInMillis();
+        cal.setTimeInMillis(now - now  % (24 * 60 * 60 * 1000)); // Find the last full day
         long endTime = cal.getTimeInMillis();
         cal.add(Calendar.MONTH, -1);
         long startTime = cal.getTimeInMillis();

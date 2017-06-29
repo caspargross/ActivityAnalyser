@@ -18,10 +18,11 @@ import java.io.IOException;
 public class MainView extends MainDesign implements View {
     String userID;
     Credential myCredential;
+    DbConnector dbConnector;
 
     public MainView() {
         this.userID = (String) VaadinSession.getCurrent().getAttribute("userID");
-
+        dbConnector = new DbConnector(userID);
         updateUserProfile();
         downloadData();
     }
@@ -34,7 +35,7 @@ public class MainView extends MainDesign implements View {
 
     public void downloadData() {
         DataRequest dataRequest = new DataRequest();
-        DbConnector dbConnector = new DbConnector();
+
         try {
             dbConnector.storeSteps(dataRequest.getFitData());
         } catch (IOException e) {
@@ -43,10 +44,8 @@ public class MainView extends MainDesign implements View {
         }
     }
 
-
     @Override
     public void enter(ViewChangeListener.ViewChangeEvent viewChangeEvent) {
-
 
     }
 

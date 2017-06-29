@@ -87,8 +87,9 @@ public class AuthRequest extends ApiRequest{
                 .setApplicationName("TrackFit").build();
         Userinfoplus userInfo = oauth2.userinfo().get().execute();
         System.out.println(userInfo.toPrettyString());
-        DbConnector dbConnect = new DbConnector();
-        dbConnect.storeUser(userInfo.toString(), myCredential);
+
+        DbConnector dbConnect = new DbConnector(userInfo.getId());
+        dbConnect.storeUser(userInfo.toString());
         // Set Vaadin Session attribute to current user
         VaadinSession.getCurrent().setAttribute("userID", userInfo.getId());
 
