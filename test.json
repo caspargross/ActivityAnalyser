@@ -1,0 +1,28 @@
+{
+  "days" : [ {
+    "MillisStart": 1496268000000,
+    "Averagesteps": 2843,
+    "Usersteps": 4954
+  },
+   {
+    "MillisStart": 1496354400000,
+    "Averagesteps": 3200,
+    "Usersteps": 5654
+  },
+  {
+    "MillisStart": 1496440800000,
+    "Averagesteps": 2450,
+    "Usersteps": 1635
+  },
+   {
+    "MillisStart": 1496527200000,
+    "Averagesteps": 2390,
+    "Usersteps": 800
+  },
+  {
+    "MillisStart": 1496613600000,
+    "Averagesteps": 2900,
+    "Usersteps": 8941
+  }]
+
+}
