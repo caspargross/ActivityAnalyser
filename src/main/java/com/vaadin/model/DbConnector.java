@@ -7,15 +7,20 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.util.JSON;
+import jdk.nashorn.internal.runtime.JSONListAdapter;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
-import static com.mongodb.client.model.Filters.and;
-import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Aggregates.lookup;
+import static com.mongodb.client.model.Aggregates.match;
+import static com.mongodb.client.model.Aggregates.project;
+import static com.mongodb.client.model.Filters.*;
+import static com.mongodb.client.model.Projections.excludeId;
 import static com.mongodb.client.model.Projections.fields;
 import static com.mongodb.client.model.Projections.include;
 
@@ -128,6 +133,34 @@ public class DbConnector extends MongoClient {
 
     public static String extractUserRealName(String userID) {
         return userColl.find(eq("_id", userID)).first().getString("name");
+    }
+
+    public String extractData(Long startTime, Long endTime) {
+
+        System.out.println("Data Extraction started");
+
+        return  db.getCollection("steps").aggregate(Arrays.asList(
+                match(
+                        and(
+                                eq("user", sessionUserID),
+                                gte("startMillis", startTime),
+                                lte("endMillis", endTime)
+                        )
+                ),
+                lookup(
+                        "days", "startMillis", "_id", "averages"
+                ),
+                project(
+                        fields(
+                                excludeId(),
+                                include("startMillis"),
+                                include("steps"),
+                                include("averages.average")
+
+                        )
+                )
+        )).toString();
+
     }
 
 

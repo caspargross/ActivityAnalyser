@@ -27,6 +27,7 @@ public class MainDesign extends HorizontalLayout {
     protected Label viewTitle;
     protected Label userLabel;
     protected CssLayout content;
+    protected CssLayout contentArea;
 
     public MainDesign() {
         Design.read(this);

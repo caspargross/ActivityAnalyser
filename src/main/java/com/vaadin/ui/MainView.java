@@ -25,6 +25,10 @@ public class MainView extends MainDesign implements View {
         dbConnector = new DbConnector(userID);
         updateUserProfile();
         downloadData();
+
+        LineChart lineChart = new LineChart();
+        lineChart.setData(dbConnector.extractData(1496102400000l, 1497657600000l));
+        contentArea.addComponent(lineChart);
     }
 
     public void updateUserProfile() {

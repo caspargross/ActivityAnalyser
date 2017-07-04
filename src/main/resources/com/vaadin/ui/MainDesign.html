@@ -6,7 +6,8 @@
   <meta name="vaadin-version" content="8.0.5">
  </head>
  <body>
-  <vaadin-horizontal-layout style-name="app-shell" spacing="false" responsive size-full>
+
+ <vaadin-horizontal-layout style-name="app-shell" spacing="false" responsive size-full>
    <vaadin-css-layout style-name="navigation-bar-container" width="200px" height-full>
     <vaadin-css-layout style-name="navigation-bar" size-full>
      <vaadin-label style-name="logo" responsive width-full plain-text>
@@ -48,12 +49,16 @@
        Label 
      </vaadin-label>
     </vaadin-horizontal-layout>
-    <vaadin-css-layout size-full _id="content" :expand>
+    <vaadin-css-layout size-full _id="content"  :expand>
      <vaadin-css-layout style-name="padding-right padding-bottom padding-left" size-full>
-      <vaadin-css-layout style-name="content-section padding" size-full></vaadin-css-layout>
+      <vaadin-css-layout style-name="content-section padding"  id="contentArea", _id="contentArea" size-full>
+
+
+      </vaadin-css-layout>
      </vaadin-css-layout>
     </vaadin-css-layout>
    </vaadin-vertical-layout>
   </vaadin-horizontal-layout>
+
  </body>
 </html>
