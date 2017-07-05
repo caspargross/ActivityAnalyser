@@ -4,6 +4,7 @@ import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.mongodb.*;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOptions;
 import com.mongodb.util.JSON;
@@ -15,14 +16,12 @@ import org.bson.types.ObjectId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
-import static com.mongodb.client.model.Aggregates.lookup;
-import static com.mongodb.client.model.Aggregates.match;
-import static com.mongodb.client.model.Aggregates.project;
+import static com.mongodb.client.model.Accumulators.addToSet;
+import static com.mongodb.client.model.Aggregates.*;
 import static com.mongodb.client.model.Filters.*;
-import static com.mongodb.client.model.Projections.excludeId;
-import static com.mongodb.client.model.Projections.fields;
-import static com.mongodb.client.model.Projections.include;
+import static com.mongodb.client.model.Projections.*;
 
 /**
  * Created by caspar on 12.06.17.
@@ -135,11 +134,12 @@ public class DbConnector extends MongoClient {
         return userColl.find(eq("_id", userID)).first().getString("name");
     }
 
+
     public String extractData(Long startTime, Long endTime) {
 
-        System.out.println("Data Extraction started");
+        List<Document> docList = new ArrayList<>();
 
-        return  db.getCollection("steps").aggregate(Arrays.asList(
+        MongoCursor<Document> iterator = db.getCollection("steps").aggregate(Arrays.asList(
                 match(
                         and(
                                 eq("user", sessionUserID),
@@ -153,16 +153,21 @@ public class DbConnector extends MongoClient {
                 project(
                         fields(
                                 excludeId(),
+                                //include("user"),
                                 include("startMillis"),
                                 include("steps"),
-                                include("averages.average")
+                                computed("average", "$averages.average")
 
                         )
                 )
-        )).toString();
+        )).iterator();
+
+        while (iterator.hasNext()) {
+            docList.add(iterator.next());
+        }
+
+        return JSON.serialize(docList);
 
     }
-
-
 
 }

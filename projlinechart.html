@@ -50,7 +50,7 @@ var svg = d3.select("body").append("svg")
           "translate(" + margin.left + "," + margin.top + ")");
 		  
 // Get the data
-d3.json("testjson.json",function(error,data){
+d3.json("data2.json",function(error,data){
         data.forEach(function(d) {
 		console.log(d);
 		//d.date = date(d.milisStart);
@@ -64,6 +64,7 @@ d3.json("testjson.json",function(error,data){
 		
 });		
 
+// This function draws
 var drawChart = function(data) {
 	// Scale the range of the data
 	  x.domain(d3.extent(data, function(d) { return d.millisstart; }));
@@ -74,6 +75,8 @@ var drawChart = function(data) {
 	  svg.append("path")
 		  .data([data])
 		  .attr("class", "line")
+          .style("stroke", "steelblue")
+          .style("stroke-width", "2px")
 		  .attr("d", valueline);
 		  
 	// Add the valueline2 path.
@@ -81,6 +84,7 @@ var drawChart = function(data) {
 		  .data([data])
 		  .attr("class", "line")
 		  .style("stroke", "red")
+          .style("stroke-width", "2px")
 		  .attr("d", valueline2);
 	  // Add the X Axis
 	  svg.append("g")

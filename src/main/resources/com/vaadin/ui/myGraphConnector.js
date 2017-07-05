@@ -12,7 +12,7 @@ window.com_vaadin_ui_LineChart = function() {
     this.onStateChange = function() {
        console.log(this.getState().data)
        lineChart.setData(this.getState().data);
-       lineChart.drawChart();
+       //lineChart.drawChart();
     };
 
 };
