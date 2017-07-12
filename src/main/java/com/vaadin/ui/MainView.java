@@ -10,6 +10,8 @@ import com.vaadin.server.ExternalResource;
 import com.vaadin.server.VaadinSession;
 
 import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
 
 
 /**
@@ -19,15 +21,20 @@ public class MainView extends MainDesign implements View {
     String userID;
     Credential myCredential;
     DbConnector dbConnector;
+    Calendar cal;
 
     public MainView() {
         this.userID = (String) VaadinSession.getCurrent().getAttribute("userID");
         dbConnector = new DbConnector(userID);
         updateUserProfile();
         downloadData();
+        cal = Calendar.getInstance();
 
         LineChart lineChart = new LineChart();
-        lineChart.setData(dbConnector.extractData(1496102400000l, 1497657600000l));
+
+        System.out.println(lastMonth() + "   " + getNow());
+        System.out.println(dbConnector.extractData(lastMonth(), getNow()));
+        lineChart.setData(dbConnector.extractData(lastMonth(), getNow()));
         contentArea.addComponent(lineChart);
     }
 
@@ -46,6 +53,17 @@ public class MainView extends MainDesign implements View {
             e.printStackTrace();
             System.out.println("Error while downloading Fit Data");
         }
+    }
+
+    public long getNow () {
+
+        return cal.getTimeInMillis();
+    }
+
+    public long lastMonth() {
+        Calendar lm = (Calendar)cal.clone();
+        lm.add(Calendar.MONTH, -1);
+        return lm.getTimeInMillis();
     }
 
     @Override
