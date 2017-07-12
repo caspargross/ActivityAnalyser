@@ -82,18 +82,20 @@ myGraph.LineChart = function (element) {
 
         // Add legend
         svg.append("text")
-            .attr("transform", "translate(" + (width+1) + "," + y(data[0].averagesteps) + ")")
-            .attr("dy", "1.5em")
+            //.attr("transform", "translate(" + (width+1) + "," + y(data[dat].averagesteps) + ")")
+            .attr("dy", ".5em")
+            .attr("dx", height-10)
             .attr("text-anchor", "start")
             .style("fill", "red")
-            .text("averagesteps");
+            .text("Average Steps");
 
         svg.append("text")
-            .attr("transform", "translate(" + (width+1) + "," + y(data[0].usersteps) + ")")
-            .attr("dy", "10em")
+            //.attr("transform", "translate(" + (width+1) + "," + y(data[dat].usersteps) + ")")
+            .attr("dy", ".25em")
+            .attr("dx", height-30)
             .attr("text-anchor", "start")
             .style("fill", "steelblue")
-            .text("usersteps");
+            .text("UserSteps");
 
 
     }
