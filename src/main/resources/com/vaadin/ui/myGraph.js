@@ -9,6 +9,8 @@ myGraph.LineChart = function (element) {
 
     var data;
 
+    var parseTime = d3.timeParse("%d-%b-%y");
+
     this.setData = function (dataString) {
         var dat = JSON.parse(dataString)
         dat.forEach(function (d) {
@@ -71,11 +73,29 @@ myGraph.LineChart = function (element) {
         // Add the X Axis
         g.append("g")
             .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x));
+            .call(d3.axisBottom(x)
+                .tickFormat(d3.timeFormat("%Y-%m-%d")));
 
         // Add the Y Axis
         g.append("g")
             .call(d3.axisLeft(y));
+
+        // Add legend
+        svg.append("text")
+            .attr("transform", "translate(" + (width+1) + "," + y(data[0].averagesteps) + ")")
+            .attr("dy", "1.5em")
+            .attr("text-anchor", "start")
+            .style("fill", "red")
+            .text("averagesteps");
+
+        svg.append("text")
+            .attr("transform", "translate(" + (width+1) + "," + y(data[0].usersteps) + ")")
+            .attr("dy", "10em")
+            .attr("text-anchor", "start")
+            .style("fill", "steelblue")
+            .text("usersteps");
+
+
     }
 
 };
